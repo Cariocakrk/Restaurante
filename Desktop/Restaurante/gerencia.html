@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerência - Restaurante</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="gerencia.css" />
+  </head>
+  <body>
+    <div class="container gerencia-container">
+      <div class="gerencia-header">
+        <h1>Gerência do Restaurante</h1>
+        <div class="header-buttons">
+          <span id="usuarioLogado" class="usuario-info"></span>
+          <button id="logoutBtn" class="logout-btn">
+            <svg class="icon icon-md" viewBox="0 0 24 24">
+              <use href="icons.svg#icon-logout"></use>
+            </svg>
+            Logout
+          </button>
+          <button id="voltarBtn" class="voltar-btn">
+            <svg class="icon icon-md" viewBox="0 0 24 24">
+              <use href="icons.svg#icon-back"></use>
+            </svg>
+            Voltar
+          </button>
+        </div>
+      </div>
+
+      <!-- Seção de Filtros -->
+      <div class="filtros-section">
+        <h2>Filtros de Data</h2>
+        <div class="filtros-container">
+          <div class="filtro-group">
+            <label for="dataInicio">Data Início:</label>
+            <input type="date" id="dataInicio" />
+          </div>
+          <div class="filtro-group">
+            <label for="dataFim">Data Fim:</label>
+            <input type="date" id="dataFim" />
+          </div>
+          <div class="filtro-group">
+            <label for="filtroRapido">Período Rápido:</label>
+            <select id="filtroRapido">
+              <option value="">Escolha um período...</option>
+              <option value="hoje">Hoje</option>
+              <option value="semana">Últimos 7 dias</option>
+              <option value="mes">Este mês</option>
+              <option value="mes-anterior">Mês anterior</option>
+              <option value="ano">Este ano</option>
+              <option value="todos">Todas as vendas</option>
+            </select>
+          </div>
+          <button id="aplicarFiltrosBtn" class="btn-aplicar">
+            Aplicar Filtros
+          </button>
+          <button id="limparFiltrosBtn" class="btn-limpar">
+            Limpar Filtros
+          </button>
+          <button id="limparBDBtn" class="btn-limpar-bd">
+            <svg class="icon icon-md" viewBox="0 0 24 24">
+              <use href="icons.svg#icon-trash"></use>
+            </svg>
+            Limpar BD (Protegido)
+          </button>
+        </div>
+      </div>
+
+      <!-- Seção de Resumo Financeiro -->
+      <div class="resumo-section">
+        <h2>Resumo Financeiro</h2>
+        <div class="resumo-grid">
+          <div class="resumo-card">
+            <div class="resumo-label">Faturamento Total</div>
+            <div class="resumo-valor" id="faturamentoTotal">R$ 0.00</div>
+          </div>
+          <div class="resumo-card">
+            <div class="resumo-label">Total de Vendas</div>
+            <div class="resumo-valor" id="totalVendas">0</div>
+          </div>
+          <div class="resumo-card">
+            <div class="resumo-label">Ticket Médio</div>
+            <div class="resumo-valor" id="ticketMedio">R$ 0.00</div>
+          </div>
+          <div class="resumo-card dinheiro">
+            <div class="resumo-label">Dinheiro</div>
+            <div class="resumo-valor" id="totalDinheiro">R$ 0.00</div>
+            <div class="resumo-subtexto" id="vendasDinheiro">0 vendas</div>
+          </div>
+          <div class="resumo-card cartao">
+            <div class="resumo-label">Cartão/PIX</div>
+            <div class="resumo-valor" id="totalCartao">R$ 0.00</div>
+            <div class="resumo-subtexto" id="vendasCartao">0 vendas</div>
+          </div>
+          <div class="resumo-card credito">
+            <div class="resumo-label">Crédito</div>
+            <div class="resumo-valor" id="totalCredito">R$ 0.00</div>
+            <div class="resumo-subtexto" id="vendasCredito">0 vendas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção de Produtos por Categoria -->
+      <div class="categorias-section">
+        <h2>Produtos Mais Vendidos por Categoria</h2>
+        <div id="produtosCategorias" class="categorias-container">
+          <p class="carregando">Carregando dados...</p>
+        </div>
+      </div>
+
+      <!-- Seção de Produtos Mais Vendidos -->
+      <div class="produtos-section">
+        <h2>Ranking de Produtos Mais Vendidos</h2>
+        <div id="produtosRanking" class="produtos-ranking">
+          <p class="carregando">Carregando dados...</p>
+        </div>
+      </div>
+
+      <!-- Seção de Todos os Produtos Vendidos -->
+      <div class="todas-vendas-section">
+        <h2>Análise de Vendas por Produto</h2>
+        <div id="todasVendas" class="todas-vendas-table">
+          <p class="carregando">Carregando dados...</p>
+        </div>
+      </div>
+
+      <!-- Seção de Detalhes de Vendas -->
+      <div class="vendas-details-section">
+        <h2>Detalhes de Vendas</h2>
+        <div id="vendasDetails" class="vendas-details">
+          <p class="carregando">Carregando dados...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Limpar BD -->
+    <div id="modalLimparBD" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Limpar Banco de Dados</h2>
+        <p>
+          Esta ação é <strong>irreversível</strong>. Digite a senha secreta para
+          continuar:
+        </p>
+        <input type="password" id="senhaLimparBD" placeholder="Senha secreta" />
+        <div class="modal-buttons">
+          <button id="confirmarLimparBtn" class="btn-confirmar">
+            Limpar Dados
+          </button>
+          <button id="cancelarLimparBtn" class="btn-cancelar">Cancelar</button>
+        </div>
+        <div id="mensagemModal" class="mensagem-modal"></div>
+      </div>
+    </div>
+
+    <script src="gerencia.js"></script>
+  </body>
+</html>

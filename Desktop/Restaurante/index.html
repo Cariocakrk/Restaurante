@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Troco - Restaurante</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="menu">
+            <h2>Menu Simulado</h2>
+            <div class="menu-actions">
+                <button onclick="window.open('promocoes.html', '_blank')">Ver Promoções</button>
+            </div>
+            <div class="categoria">
+                <h3>Pratos</h3>
+                <ul>
+                    <li>Feijoada - R$ 25.00 <button class="add-btn" data-preco="25.00">Adicionar</button></li>
+                    <li>Moqueca - R$ 30.00 <button class="add-btn" data-preco="30.00">Adicionar</button></li>
+                    <li>Churrasco - R$ 35.00 <button class="add-btn" data-preco="35.00">Adicionar</button></li>
+                    <li>Lasanha - R$ 28.00 <button class="add-btn" data-preco="28.00">Adicionar</button></li>
+                    <li>Strogonoff - R$ 32.00 <button class="add-btn" data-preco="32.00">Adicionar</button></li>
+                    <li>Picanha - R$ 40.00 <button class="add-btn" data-preco="40.00">Adicionar</button></li>
+                    <li>Frango Grelhado - R$ 22.00 <button class="add-btn" data-preco="22.00">Adicionar</button></li>
+                    <li>Peixe Assado - R$ 38.00 <button class="add-btn" data-preco="38.00">Adicionar</button></li>
+                </ul>
+            </div>
+            <div class="categoria">
+                <h3>Salgados</h3>
+                <ul>
+                    <li>Coxinha - R$ 5.00 <button class="add-btn" data-preco="5.00">Adicionar</button></li>
+                    <li>Empada - R$ 6.00 <button class="add-btn" data-preco="6.00">Adicionar</button></li>
+                    <li>Pastel - R$ 4.50 <button class="add-btn" data-preco="4.50">Adicionar</button></li>
+                    <li>Esfiha - R$ 5.50 <button class="add-btn" data-preco="5.50">Adicionar</button></li>
+                    <li>Kibe - R$ 6.50 <button class="add-btn" data-preco="6.50">Adicionar</button></li>
+                    <li>Bolinha de Queijo - R$ 4.00 <button class="add-btn" data-preco="4.00">Adicionar</button></li>
+                    <li>Rissole - R$ 5.50 <button class="add-btn" data-preco="5.50">Adicionar</button></li>
+                    <li>Enroladinho - R$ 4.50 <button class="add-btn" data-preco="4.50">Adicionar</button></li>
+                </ul>
+            </div>
+            <div class="categoria">
+                <h3>Bebidas</h3>
+                <ul>
+                    <li>Coca-Cola 350ml - R$ 4.00 <button class="add-btn" data-preco="4.00">Adicionar</button></li>
+                    <li>Suco de Laranja - R$ 5.00 <button class="add-btn" data-preco="5.00">Adicionar</button></li>
+                    <li>Água - R$ 2.00 <button class="add-btn" data-preco="2.00">Adicionar</button></li>
+                    <li>Cerveja 600ml - R$ 8.00 <button class="add-btn" data-preco="8.00">Adicionar</button></li>
+                    <li>Refrigerante 2L - R$ 6.00 <button class="add-btn" data-preco="6.00">Adicionar</button></li>
+                    <li>Chá Gelado - R$ 4.50 <button class="add-btn" data-preco="4.50">Adicionar</button></li>
+                    <li>Vinho Tinto - R$ 15.00 <button class="add-btn" data-preco="15.00">Adicionar</button></li>
+                    <li>Café - R$ 3.00 <button class="add-btn" data-preco="3.00">Adicionar</button></li>
+                </ul>
+            </div>
+            <div class="categoria">
+                <h3>Acompanhantes</h3>
+                <ul>
+                    <li>Arroz - R$ 3.00 <button class="add-btn" data-preco="3.00">Adicionar</button></li>
+                    <li>Feijão - R$ 3.00 <button class="add-btn" data-preco="3.00">Adicionar</button></li>
+                    <li>Salada - R$ 4.00 <button class="add-btn" data-preco="4.00">Adicionar</button></li>
+                    <li>Batata Frita - R$ 5.00 <button class="add-btn" data-preco="5.00">Adicionar</button></li>
+                    <li>Farofa - R$ 2.50 <button class="add-btn" data-preco="2.50">Adicionar</button></li>
+                    <li>Torradas - R$ 3.50 <button class="add-btn" data-preco="3.50">Adicionar</button></li>
+                    <li>Molho - R$ 2.00 <button class="add-btn" data-preco="2.00">Adicionar</button></li>
+                    <li>Queijo Ralado - R$ 2.50 <button class="add-btn" data-preco="2.50">Adicionar</button></li>
+                </ul>
+            </div>
+        </div>
+        <div class="calculadora">
+            <h1>Calculadora de Troco</h1>
+            <div id="pedidoAtual" class="pedido-atual">
+                <h3>Pedido Atual</h3>
+                <ul id="listaPedido"></ul>
+                <p id="subtotal">Subtotal: R$ 0.00</p>
+                <div class="input-group">
+                    <label for="desconto">Desconto (%):</label>
+                    <input type="number" id="desconto" step="0.01" min="0" max="100" placeholder="0.00">
+                </div>
+                <p id="totalComDesconto">Total com Desconto: R$ 0.00</p>
+            </div>
+            <form id="calcForm">
+            <div class="input-group">
+                <label for="totalConta">Valor Total da Conta (R$):</label>
+                <input type="number" id="totalConta" step="0.01" min="0" placeholder="0.00" readonly>
+            </div>
+            <div class="input-group">
+                <label for="tipoPagamento">Tipo de Pagamento:</label>
+                <select id="tipoPagamento">
+                    <option value="dinheiro">Dinheiro</option>
+                    <option value="cartao">Cartão/PIX</option>
+                    <option value="credito">Crédito</option>
+                </select>
+            </div>
+            <div class="input-group" id="valorPagoGroup">
+                <label for="valorPago">Valor Pago pelo Cliente (R$):</label>
+                <input type="number" id="valorPago" step="0.01" min="0" placeholder="0.00" required>
+            </div>
+            <div class="buttons">
+                <button type="button" id="calcularBtn">Calcular</button>
+                <button type="button" id="finalizarBtn">Finalizar Venda</button>
+                <button type="button" id="limparBtn">Limpar</button>
+            </div>
+        </form>
+        <div id="resultado" class="resultado"></div>
+        </div>
+        <div class="botoes-rodape">
+            <button id="vendasBtn" class="vendas-btn" onclick="window.open('vendas.html', '_blank')">
+                <svg class="icon icon-md icon-primary" viewBox="0 0 24 24"><use href="icons.svg#icon-chart"></use></svg>
+                Vendas do Dia
+            </button>
+            <button id="estoqueBtn" class="estoque-btn" onclick="window.open('estoque.html', '_blank')">
+                📦
+                Estoque
+            </button>
+            <button id="gerenciaBtn" class="gerencia-btn" onclick="window.open('gerencia.html', '_blank')">
+                <svg class="icon icon-md icon-primary" viewBox="0 0 24 24"><use href="icons.svg#icon-settings"></use></svg>
+                Gerência
+            </button>
+        </div>
+    </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

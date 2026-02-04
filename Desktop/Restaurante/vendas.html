@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendas do Dia - Restaurante</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="vendas-page">
+    <div class="container vendas-container">
+      <header class="vendas-header">
+        <h1 class="vendas-title">
+          <svg class="icon icon-lg" viewBox="0 0 24 24">
+            <use href="icons.svg#icon-chart"></use>
+          </svg>
+          Vendas do Dia
+        </h1>
+        <p class="vendas-subtitle">Acompanhe todas as vendas em tempo real</p>
+      </header>
+
+      <div class="vendas-content">
+        <div class="vendas-list-wrapper">
+          <ul id="listaVendas" class="vendas-list"></ul>
+        </div>
+
+        <div class="vendas-summary">
+          <div class="summary-card summary-total">
+            <span class="summary-label">Total Bruto</span>
+            <p id="totalBruto" class="summary-value">R$ 0.00</p>
+          </div>
+
+          <div class="summary-card summary-dinheiro">
+            <span class="summary-label">Dinheiro</span>
+            <p id="totalDinheiro" class="summary-value">R$ 0.00</p>
+            <span class="summary-count" id="contDinheiro">0 vendas</span>
+          </div>
+
+          <div class="summary-card summary-cartao">
+            <span class="summary-label">Cartão/PIX</span>
+            <p id="totalCartao" class="summary-value">R$ 0.00</p>
+            <span class="summary-count" id="contCartao">0 vendas</span>
+          </div>
+
+          <div class="summary-card summary-credito">
+            <span class="summary-label">Crédito</span>
+            <p id="totalCredito" class="summary-value">R$ 0.00</p>
+            <span class="summary-count" id="contCredito">0 vendas</span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="vendas-footer">
+        <button type="button" id="limparVendasBtn" class="btn-danger">
+          <svg class="icon icon-md" viewBox="0 0 24 24">
+            <use href="icons.svg#icon-trash"></use>
+          </svg>
+          Limpar Vendas do Dia
+        </button>
+        <button type="button" id="voltarBtn" class="btn-secondary">
+          <svg class="icon icon-md" viewBox="0 0 24 24">
+            <use href="icons.svg#icon-back"></use>
+          </svg>
+          Voltar
+        </button>
+      </footer>
+    </div>
+    <script src="vendas.js"></script>
+  </body>
+</html>

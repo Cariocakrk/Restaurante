@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerenciamento de Estoque - Restaurante</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .estoque-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 20px;
+      }
+
+      .secao {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .secao h2 {
+        color: #333;
+        border-bottom: 2px solid #2196f3;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+
+      .item-estoque {
+        background: white;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 6px;
+        border-left: 4px solid #2196f3;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .item-estoque.baixo {
+        border-left-color: #ff9800;
+        background: #fff3e0;
+      }
+
+      .info-item {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .nome-item {
+        font-weight: bold;
+        color: #333;
+        font-size: 16px;
+      }
+
+      .quantidade-item {
+        color: #666;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+
+      .quantidade-item.baixo {
+        color: #ff9800;
+        font-weight: bold;
+      }
+
+      .botoes-item {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s;
+      }
+
+      .btn-entrada {
+        background: #4caf50;
+        color: white;
+      }
+
+      .btn-entrada:hover {
+        background: #45a049;
+      }
+
+      .btn-saida {
+        background: #f44336;
+        color: white;
+      }
+
+      .btn-saida:hover {
+        background: #da190b;
+      }
+
+      .btn-novo {
+        background: #2196f3;
+        color: white;
+        padding: 12px 20px;
+        width: 100%;
+        margin-bottom: 15px;
+      }
+
+      .btn-novo:hover {
+        background: #0b7dda;
+      }
+
+      .btn-voltar {
+        background: #666;
+        color: white;
+        padding: 12px 20px;
+      }
+
+      .btn-voltar:hover {
+        background: #555;
+      }
+
+      .form-grupo {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #2196f3;
+        box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #2196f3;
+        padding-bottom: 15px;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        color: #333;
+      }
+
+      .fechar-modal {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #999;
+        padding: 0;
+        width: auto;
+      }
+
+      .fechar-modal:hover {
+        color: #333;
+      }
+
+      .historico-item {
+        background: white;
+        padding: 12px;
+        margin: 8px 0;
+        border-radius: 4px;
+        border-left: 4px solid #2196f3;
+        font-size: 14px;
+      }
+
+      .historico-item.saida {
+        border-left-color: #f44336;
+      }
+
+      .historico-item.entrada {
+        border-left-color: #4caf50;
+      }
+
+      .historico-data {
+        color: #999;
+        font-size: 12px;
+      }
+
+      .historico-tipo {
+        font-weight: bold;
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 3px;
+        margin: 0 5px 0 0;
+      }
+
+      .historico-tipo.entrada {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+
+      .historico-tipo.saida {
+        background: #ffebee;
+        color: #c62828;
+      }
+
+      #historico {
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+      }
+
+      #historico::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #historico::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      #historico::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+      }
+
+      #historico::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      .alerta {
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border-left: 4px solid;
+      }
+
+      .alerta-info {
+        background: #e3f2fd;
+        border-left-color: #2196f3;
+        color: #1565c0;
+      }
+
+      .alerta-aviso {
+        background: #fff3e0;
+        border-left-color: #ff9800;
+        color: #e65100;
+      }
+
+      .alerta-erro {
+        background: #ffebee;
+        border-left-color: #f44336;
+        color: #c62828;
+      }
+
+      .alerta-sucesso {
+        background: #e8f5e9;
+        border-left-color: #4caf50;
+        color: #2e7d32;
+      }
+
+      .lista-vazia {
+        text-align: center;
+        color: #999;
+        padding: 20px;
+        font-style: italic;
+      }
+
+      .header-estoque {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .header-estoque h1 {
+        margin: 0;
+        color: #333;
+      }
+
+      @media (max-width: 768px) {
+        .estoque-container {
+          grid-template-columns: 1fr;
+        }
+
+        .item-estoque {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .botoes-item {
+          width: 100%;
+          margin-top: 10px;
+        }
+
+        .botoes-item button {
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="estoque-container">
+      <!-- SEÇÃO ESQUERDA: LISTA DE ESTOQUE -->
+      <div>
+        <div class="header-estoque">
+          <div>
+            <h1>📦 Estoque</h1>
+            <p
+              id="usuarioLogado"
+              style="font-size: 0.9em; color: #666; margin: 5px 0 0 0"
+            ></p>
+          </div>
+          <div style="display: flex; gap: 10px">
+            <button class="btn-voltar" onclick="voltarHome()">Voltar</button>
+            <button
+              class="logout-btn"
+              id="logoutBtn"
+              style="
+                background: #ff6b6b;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+              "
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-novo" onclick="abrirModalNovo()">
+          + Novo Item de Estoque
+        </button>
+
+        <div id="listaEstoque" class="secao">
+          <h2>Itens de Estoque</h2>
+          <div id="itensEstoque" class="lista-vazia">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO DIREITA: HISTÓRICO DE MOVIMENTAÇÕES -->
+      <div>
+        <div class="header-estoque">
+          <h1>📋 Histórico</h1>
+        </div>
+
+        <div class="secao">
+          <h2>Movimentações Recentes</h2>
+          <div id="historico" class="lista-vazia">Carregando...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Novo Item -->
+    <div id="modalNovo" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Novo Item de Estoque</h3>
+          <button class="fechar-modal" onclick="fecharModal('modalNovo')">
+            ×
+          </button>
+        </div>
+
+        <form id="formNovoItem" onsubmit="criarNovoItem(event)">
+          <div class="form-grupo">
+            <label for="novoNome">Nome do Item *</label>
+            <input type="text" id="novoNome" required placeholder="Ex: Arroz" />
+          </div>
+
+          <div class="form-grupo">
+            <label for="novoUnidade">Unidade *</label>
+            <select id="novoUnidade" required>
+              <option value="">Selecionar</option>
+              <option value="kg">Quilograma (kg)</option>
+              <option value="g">Grama (g)</option>
+              <option value="l">Litro (l)</option>
+              <option value="ml">Mililitro (ml)</option>
+              <option value="unidade">Unidade</option>
+              <option value="dúzia">Dúzia</option>
+            </select>
+          </div>
+
+          <div class="form-grupo">
+            <label for="novoQuantidade">Quantidade Inicial</label>
+            <input
+              type="number"
+              id="novoQuantidade"
+              step="0.01"
+              min="0"
+              placeholder="0"
+            />
+          </div>
+
+          <div class="form-grupo">
+            <label for="novoMinimo">Estoque Mínimo</label>
+            <input
+              type="number"
+              id="novoMinimo"
+              step="0.01"
+              min="0"
+              placeholder="0"
+            />
+          </div>
+
+          <button type="submit" class="btn-novo">Criar Item</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Entrada de Estoque -->
+    <div id="modalEntrada" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Registrar Entrada</h3>
+          <button class="fechar-modal" onclick="fecharModal('modalEntrada')">
+            ×
+          </button>
+        </div>
+
+        <form id="formEntrada" onsubmit="registrarEntrada(event)">
+          <div class="form-grupo">
+            <label>Item: <strong id="entradaItemNome"></strong></label>
+            <input type="hidden" id="entradaItemId" />
+          </div>
+
+          <div class="form-grupo">
+            <label for="entradaQuantidade">Quantidade *</label>
+            <input
+              type="number"
+              id="entradaQuantidade"
+              required
+              step="0.01"
+              min="0.01"
+              placeholder="0"
+            />
+          </div>
+
+          <div class="form-grupo">
+            <label for="entradaMotivo">Motivo *</label>
+            <select id="entradaMotivo" required>
+              <option value="">Selecionar</option>
+              <option value="compra">Compra</option>
+              <option value="devolucao">Devolução</option>
+              <option value="ajuste">Ajuste de Inventário</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="form-grupo">
+            <label for="entradaObservacao">Observação</label>
+            <textarea
+              id="entradaObservacao"
+              placeholder="Adicione detalhes se necessário"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn-entrada">Registrar Entrada</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Saída de Estoque -->
+    <div id="modalSaida" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Registrar Saída</h3>
+          <button class="fechar-modal" onclick="fecharModal('modalSaida')">
+            ×
+          </button>
+        </div>
+
+        <form id="formSaida" onsubmit="registrarSaida(event)">
+          <div class="form-grupo">
+            <label>Item: <strong id="saidaItemNome"></strong></label>
+            <input type="hidden" id="saidaItemId" />
+            <p style="color: #666; font-size: 14px; margin: 5px 0 0 0">
+              Disponível: <strong id="saidaQuantidadeDisponivel">0</strong>
+            </p>
+          </div>
+
+          <div class="form-grupo">
+            <label for="saidaQuantidade">Quantidade *</label>
+            <input
+              type="number"
+              id="saidaQuantidade"
+              required
+              step="0.01"
+              min="0.01"
+              placeholder="0"
+            />
+          </div>
+
+          <div class="form-grupo">
+            <label for="saidaMotivo">Motivo *</label>
+            <select id="saidaMotivo" required>
+              <option value="">Selecionar</option>
+              <option value="uso_diario">Uso Diário</option>
+              <option value="perda">Perda/Desperdício</option>
+              <option value="devolucao">Devolução ao Fornecedor</option>
+              <option value="ajuste">Ajuste de Inventário</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="form-grupo">
+            <label for="saidaObservacao">Observação</label>
+            <textarea
+              id="saidaObservacao"
+              placeholder="Adicione detalhes se necessário"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn-saida">Registrar Saída</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="estoque.js"></script>
+  </body>
+</html>
