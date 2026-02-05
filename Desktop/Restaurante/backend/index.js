@@ -597,6 +597,190 @@ app.get("/estoque/movimentacoes", (req, res) => {
   });
 });
 
+// ===========================
+// ROTAS DE PROMOÇÕES
+// ===========================
+
+// GET /promocoes - Listar todas
+app.get("/promocoes", (req, res) => {
+    db.all("SELECT * FROM promocoes ORDER BY created_at DESC", (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// POST /promocoes - Criar promoção
+app.post("/promocoes", (req, res) => {
+    const { titulo, descricao, desconto, ativa } = req.body;
+    if (!titulo) return res.status(400).json({ error: "Título é obrigatório" });
+
+    db.run(
+        "INSERT INTO promocoes (titulo, descricao, desconto, ativa) VALUES (?, ?, ?, ?)",
+        [titulo, descricao, desconto || 0, ativa !== undefined ? ativa : 1],
+        function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.status(201).json({ id: this.lastID, titulo, descricao, desconto, ativa });
+        }
+    );
+});
+
+// PUT /promocoes/:id - Atualizar
+app.put("/promocoes/:id", (req, res) => {
+    const { id } = req.params;
+    const { titulo, descricao, desconto, ativa } = req.body;
+
+    // Build dynamic query
+    let fields = [];
+    let params = [];
+    if (titulo) { fields.push("titulo = ?"); params.push(titulo); }
+    if (descricao !== undefined) { fields.push("descricao = ?"); params.push(descricao); }
+    if (desconto !== undefined) { fields.push("desconto = ?"); params.push(desconto); }
+    if (ativa !== undefined) { fields.push("ativa = ?"); params.push(ativa); }
+    params.push(id);
+
+    if (fields.length === 0) return res.status(400).json({ error: "Nada a atualizar" });
+
+    db.run(`UPDATE promocoes SET ${fields.join(", ")} WHERE id = ?`, params, function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+    });
+});
+
+// DELETE /promocoes/:id - Excluir
+app.delete("/promocoes/:id", (req, res) => {
+    const { id } = req.params;
+    db.run("DELETE FROM promocoes WHERE id = ?", [id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+    });
+});
+
+// ===========================
+// ROTAS DE PRODUTOS (DEV)
+// ===========================
+
+// GET /produtos - Listar todos os produtos
+app.get("/produtos", (req, res) => {
+  db.all("SELECT * FROM produtos ORDER BY categoria, nome", (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: "Erro ao listar produtos" });
+    }
+    
+    // Agrupar por categoria para facilitar no front (opcional, ou retornar flat)
+    // Vamos retornar flat e o front agrupa se precisar, ou usamos o formato do MENU_ITEMS
+    // Para manter compatibilidade com o use case de "editar", flat é melhor.
+    res.json(rows);
+  });
+});
+
+// PUT /produtos/:id - Atualizar produto (price, nome, categoria)
+app.put("/produtos/:id", (req, res) => {
+  const { id } = req.params;
+  const { price, nome, categoria } = req.body; 
+
+  if (price === undefined && !nome && !categoria) {
+    return res.status(400).json({ error: "Pelo menos um campo deve ser fornecido para atualização" });
+  }
+
+  // Construir query dinâmica
+  let fields = [];
+  let params = [];
+
+  if (price !== undefined) {
+      fields.push("preco = ?");
+      params.push(price);
+  }
+  if (nome) {
+      fields.push("nome = ?");
+      params.push(nome);
+  }
+  if (categoria) {
+      fields.push("categoria = ?");
+      params.push(categoria);
+  }
+  
+  params.push(id);
+
+  const sql = `UPDATE produtos SET ${fields.join(", ")} WHERE id = ?`;
+
+  db.run(sql, params, function(err) {
+    if (err) {
+      if (err.message.includes("UNIQUE constraint failed")) {
+          return res.status(400).json({ error: "Nome de produto já existe" });
+      }
+      return res.status(500).json({ error: "Erro ao atualizar produto" });
+    }
+    res.json({ success: true, message: "Produto atualizado com sucesso" });
+  });
+});
+
+// DELETE /produtos/:id - Remover produto
+app.delete("/produtos/:id", (req, res) => {
+    const { id } = req.params;
+
+    // Verificar se produto está em uso (opcional, mas recomendado checkar integridade)
+    // Se deletar, os itens de venda passados ficarão "órfãos" de nome se não salvou no item.
+    // Na nossa tabela itens_venda, salvamos o NOME do produto ("produto" column stores name/string),
+    // então deletar da tabela usuarios/produtos não quebra histórico visual, mas quebra relatorios agrupados por ID se houver.
+    // Mas nossa tabela itens_venda usa 'produto' (texto) e não 'produto_id'.
+    // Então é seguro deletar da tabela de produtos.
+    
+    db.run("DELETE FROM produtos WHERE id = ?", [id], function(err) {
+        if (err) {
+            return res.status(500).json({ error: "Erro ao deletar produto" });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: "Produto não encontrado" });
+        }
+        res.json({ success: true, message: "Produto removido com sucesso" });
+    });
+});
+
+// POST /produtos - Criar novo produto
+app.post("/produtos", (req, res) => {
+  const { nome, price, categoria } = req.body;
+
+  if (!nome || !price || !categoria) {
+    return res.status(400).json({ error: "Nome, preço e categoria são obrigatórios" });
+  }
+
+  db.run(
+    "INSERT INTO produtos (nome, preco, categoria) VALUES (?, ?, ?)",
+    [nome, price, categoria],
+    function(err) {
+      if (err) {
+        if (err.message.includes("UNIQUE constraint failed")) {
+             return res.status(400).json({ error: "Produto já existe" });
+        }
+        return res.status(500).json({ error: "Erro ao criar produto" });
+      }
+      res.status(201).json({ id: this.lastID, nome, preco: price, categoria });
+    }
+  );
+});
+
+// DELETE /banco - Limpar dados transacionais (DEV ONLY)
+app.delete("/banco", (req, res) => {
+  const { senha } = req.body;
+  
+  // Senha hardcoded do dev (ou verificar via auth middleware se estivesse implementado)
+  if (senha !== "0078910") {
+    return res.status(401).json({ error: "Senha inválida" });
+  }
+
+  db.serialize(() => {
+    db.run("DELETE FROM itens_venda");
+    db.run("DELETE FROM vendas");
+    db.run("DELETE FROM movimentacoes_estoque");
+    // Opcional: Resetar estoque para valores iniciais ou zerar?
+    // "Limpar o banco" geralmente é zerar transações.
+    // Vamos zerar as quantidades atuais do estoque para consistência.
+    db.run("UPDATE estoque SET quantidade_atual = 0");
+    
+    res.json({ success: true, message: "Banco de dados limpo com sucesso!" });
+  });
+});
+
 // GET /estoque/:id - Obter detalhes de um item
 app.get("/estoque/:id", (req, res) => {
   const { id } = req.params;
@@ -707,6 +891,29 @@ app.put("/estoque/:id/saida", (req, res) => {
       res.json({ success: true, message: "Saída registrada com sucesso" });
     });
   });
+});
+
+// DELETE /estoque/:id - Remover item do estoque (Dev Only idealmente, mas aberto por enquanto)
+app.delete("/estoque/:id", (req, res) => {
+    const { id } = req.params;
+    
+    // Primeiro deletar movimentações para não violar FK
+    db.run("DELETE FROM movimentacoes_estoque WHERE estoque_id = ?", [id], (err) => {
+        if (err) {
+            return res.status(500).json({ error: "Erro ao deletar movimentações vinculadas" });
+        }
+        
+        // Agora deletar o item
+        db.run("DELETE FROM estoque WHERE id = ?", [id], function(err) {
+            if (err) {
+                return res.status(500).json({ error: "Erro ao deletar item" });
+            }
+            if (this.changes === 0) {
+                return res.status(404).json({ error: "Item não encontrado" });
+            }
+            res.json({ success: true, message: "Item removido com sucesso" });
+        });
+    });
 });
 
 // Rota raiz

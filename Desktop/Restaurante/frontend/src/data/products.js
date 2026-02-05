@@ -1,0 +1,42 @@
+export const MENU_ITEMS = {
+  "Pratos": [
+    { name: "Feijoada", price: 25.00 },
+    { name: "Moqueca", price: 30.00 },
+    { name: "Churrasco", price: 35.00 },
+    { name: "Lasanha", price: 28.00 },
+    { name: "Strogonoff", price: 32.00 },
+    { name: "Picanha", price: 40.00 },
+    { name: "Frango Grelhado", price: 22.00 },
+    { name: "Peixe Assado", price: 38.00 },
+  ],
+  "Salgados": [
+    { name: "Coxinha", price: 5.00 },
+    { name: "Empada", price: 6.00 },
+    { name: "Pastel", price: 4.50 },
+    { name: "Esfiha", price: 5.50 },
+    { name: "Kibe", price: 6.50 },
+    { name: "Bolinha de Queijo", price: 4.00 },
+    { name: "Rissole", price: 5.50 },
+    { name: "Enroladinho", price: 4.50 },
+  ],
+  "Bebidas": [
+    { name: "Coca-Cola 350ml", price: 4.00 },
+    { name: "Suco de Laranja", price: 5.00 },
+    { name: "Água", price: 2.00 },
+    { name: "Cerveja 600ml", price: 8.00 },
+    { name: "Refrigerante 2L", price: 6.00 },
+    { name: "Chá Gelado", price: 4.50 },
+    { name: "Vinho Tinto", price: 15.00 },
+    { name: "Café", price: 3.00 },
+  ],
+  "Acompanhantes": [
+    { name: "Arroz", price: 3.00 },
+    { name: "Feijão", price: 3.00 },
+    { name: "Salada", price: 4.00 },
+    { name: "Batata Frita", price: 5.00 },
+    { name: "Farofa", price: 2.50 },
+    { name: "Torradas", price: 3.50 },
+    { name: "Molho", price: 2.00 },
+    { name: "Queijo Ralado", price: 2.50 },
+  ]
+};
